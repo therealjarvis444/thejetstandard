@@ -107,34 +107,18 @@
     }
 
     // ============================================
-    // Email Capture Popup (Triggers on ALL Affiliate Links + Pricing Guide Button)
+    // Email Capture Popup
     // ============================================
     const emailCapturePopup = document.getElementById('email-capture-popup');
     const popupClose = document.querySelector('.popup-close');
     const popupDecline = document.getElementById('popup-decline');
     const popupEmailForm = document.getElementById('popup-email-form');
-    const pricingGuideTrigger = document.getElementById('pricing-guide-trigger');
-    const villiersLinks = document.querySelectorAll('a[href*="villiers.ai/?id=G2YINT"]');
+    const villiersLinks = document.querySelectorAll('a[href*="villiers.ai"]');
     
-    let popupShown = false;
     let pendingRedirect = null;
-    let isPricingGuideFlow = false;
     
-    function showPopup(redirectUrl, isPricingGuide = false) {
-        // Only show once per session
-        if (popupShown || sessionStorage.getItem('email-popup-shown') === 'true') {
-            // Already shown, redirect directly
-            if (redirectUrl) {
-                window.open(redirectUrl, '_blank');
-            }
-            return;
-        }
-        
-        popupShown = true;
-        sessionStorage.setItem('email-popup-shown', 'true');
+    function showPopup(redirectUrl) {
         pendingRedirect = redirectUrl;
-        isPricingGuideFlow = isPricingGuide;
-        
         if (emailCapturePopup) {
             emailCapturePopup.classList.add('show');
             trackEvent('email_popup_shown', { event_category: 'engagement', value: 1 });
@@ -145,78 +129,49 @@
         if (emailCapturePopup) {
             emailCapturePopup.classList.remove('show');
         }
-    }
-    
-    // Pricing guide button trigger
-    if (pricingGuideTrigger) {
-        pricingGuideTrigger.addEventListener('click', function() {
-            showPopup('https://villiers.ai/?id=G2YINT', true);
-        });
-    }
-    
-    // Pricing guide button triggers (both buttons)
-    const pricingGuideTriggerMain = document.getElementById('pricing-guide-trigger-main');
-    const pricingGuideTriggerPopup = document.getElementById('pricing-guide-trigger-popup');
-    const pricingGuideTriggerBottom = document.getElementById('pricing-guide-trigger');
-    
-    if (pricingGuideTriggerMain) {
-        pricingGuideTriggerMain.addEventListener('click', function(e) {
-            e.preventDefault();
-            showPopup('https://villiers.ai/?id=G2YINT', true);
-        });
-    }
-    
-    if (pricingGuideTriggerPopup) {
-        pricingGuideTriggerPopup.addEventListener('click', function(e) {
-            e.preventDefault();
-            showPopup('https://villiers.ai/?id=G2YINT', true);
-        });
-    }
-    
-    if (pricingGuideTriggerBottom) {
-        pricingGuideTriggerBottom.addEventListener('click', function(e) {
-            e.preventDefault();
-            showPopup('https://villiers.ai/?id=G2YINT', true);
-        });
+        pendingRedirect = null;
     }
     
     // Intercept all Villiers affiliate links
     villiersLinks.forEach(function(link) {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            const href = this.href;
-            showPopup(href, false);
+            showPopup(this.href);
         });
     });
     
-    // Close handlers - X button should just close popup, NOT redirect
+    // Pricing guide buttons
+    const pricingGuideTriggers = document.querySelectorAll('[id*="pricing-guide-trigger"]');
+    pricingGuideTriggers.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showPopup('https://villiers.ai/?id=G2YINT');
+        });
+    });
+    
+    // X button - just close, no redirect
     if (popupClose) {
         popupClose.addEventListener('click', function() {
             hidePopup();
-            // Clear pending redirect so they stay on the page
-            pendingRedirect = null;
         });
     }
     
+    // Decline button - close and redirect
     if (popupDecline) {
         popupDecline.addEventListener('click', function() {
             hidePopup();
             trackEvent('email_popup_declined', { event_category: 'engagement', value: 1 });
-            // Redirect if pending
             if (pendingRedirect) {
                 window.open(pendingRedirect, '_blank');
-                pendingRedirect = null;
             }
         });
     }
     
-    // Close on overlay click - should just close popup, NOT redirect
+    // Click outside - just close, no redirect
     if (emailCapturePopup) {
         emailCapturePopup.addEventListener('click', function(e) {
             if (e.target === emailCapturePopup || e.target.classList.contains('popup-overlay')) {
                 hidePopup();
-                // Clear pending redirect so they stay on the page
-                pendingRedirect = null;
             }
         });
     }
