@@ -189,15 +189,12 @@
         });
     });
     
-    // Close handlers
+    // Close handlers - X button should just close popup, NOT redirect
     if (popupClose) {
         popupClose.addEventListener('click', function() {
             hidePopup();
-            // Redirect if pending
-            if (pendingRedirect) {
-                window.open(pendingRedirect, '_blank');
-                pendingRedirect = null;
-            }
+            // Clear pending redirect so they stay on the page
+            pendingRedirect = null;
         });
     }
     
@@ -213,15 +210,13 @@
         });
     }
     
-    // Close on overlay click
+    // Close on overlay click - should just close popup, NOT redirect
     if (emailCapturePopup) {
         emailCapturePopup.addEventListener('click', function(e) {
             if (e.target === emailCapturePopup || e.target.classList.contains('popup-overlay')) {
                 hidePopup();
-                if (pendingRedirect) {
-                    window.open(pendingRedirect, '_blank');
-                    pendingRedirect = null;
-                }
+                // Clear pending redirect so they stay on the page
+                pendingRedirect = null;
             }
         });
     }
