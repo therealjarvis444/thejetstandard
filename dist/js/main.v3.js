@@ -81,7 +81,7 @@
     }
 
     // Hook all affiliate links to show popup
-    const affiliateLink = 'http://al/jet-mid-cta';
+    const affiliateLink = 'https://villiers.ai/?id=G2YINT';
     
     // Hero CTA buttons
     const heroCTAs = document.querySelectorAll('#hero-cta-primary, #hero-cta-secondary');
@@ -102,7 +102,7 @@
     });
 
     // All other affiliate links
-    document.querySelectorAll('a[href*="http://al/"]').forEach(function(link) {
+    document.querySelectorAll('a[href*="villiers.ai"]').forEach(function(link) {
         // Skip if it's a direct PDF download
         if (link.getAttribute('download')) return;
         
