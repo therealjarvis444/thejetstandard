@@ -1,11 +1,16 @@
-# Build output
-dist/
+# Wrangler cache
+.wrangler/
 
-# macOS
-.DS_Store
-
-# Logs
-*.log
-
-# Node
+# Node modules (if ever added)
 node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/

@@ -1,0 +1,41 @@
+# Cloudflare Pages Configuration for The Jet Standard
+name = "thejetstandard"
+compatibility_date = "2026-04-29"
+
+# Build settings
+[site]
+bucket = "./dist"
+
+# No build command needed - static site
+# The dist/ folder is already built
+
+# Optional: Headers for security and performance
+[[headers]]
+for = "/*"
+[headers.values]
+  X-Frame-Options = "DENY"
+  X-Content-Type-Options = "nosniff"
+  Referrer-Policy = "strict-origin-when-cross-origin"
+  Permissions-Policy = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+
+# Cache static assets aggressively
+[[headers]]
+for = "/css/*"
+[headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/js/*"
+[headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/assets/*"
+[headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+# Redirect www to apex domain (optional - configure after DNS)
+# [[redirects]]
+# from = "https://www.thejetstandard.com/*"
+# to = "https://thejetstandard.com/:splat"
+# status = 301
