@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Jet Charter Pricing Guide | The Jet Standard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.7;
+            color: #1a1a1a;
+            background: #ffffff;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-bottom: 3px solid #c9a961;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .header .subtitle {
+            font-size: 16px;
+            color: #666;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            font-size: 24px;
+            font-weight: 400;
+            color: #c9a961;
+            margin: 50px 0 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            letter-spacing: 1px;
+        }
+        
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 30px 0 15px;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .pricing-card {
+            background: #f9f9f9;
+            padding: 30px 25px;
+            border-left: 4px solid #c9a961;
+            transition: transform 0.3s ease;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .pricing-card h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+        
+        .pricing-card .price {
+            font-size: 24px;
+            color: #c9a961;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .pricing-card ul {
+            list-style: none;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .pricing-card li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .pricing-card li:before {
+            content: "•";
+            color: #c9a961;
+            position: absolute;
+            left: 0;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px 0;
+            font-size: 15px;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .comparison-table th {
+            background: #f9f9f9;
+            font-weight: 600;
+            color: #1a1a1a;
+            width: 50%;
+        }
+        
+        .comparison-table tr:hover {
+            background: #fafafa;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #c9a961 0%, #b8964f 100%);
+            color: white;
+            padding: 35px;
+            margin: 40px 0;
+            border-radius: 4px;
+        }
+        
+        .highlight-box h3 {
+            color: white;
+            margin-top: 0;
+        }
+        
+        .highlight-box p {
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+            margin: 30px 0;
+        }
+        
+        .step-list li {
+            counter-increment: step-counter;
+            padding: 20px 0 20px 60px;
+            position: relative;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .step-list li:before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 20px;
+            width: 40px;
+            height: 40px;
+            background: #c9a961;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .step-list li strong {
+            display: block;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .faq-item {
+            margin: 25px 0;
+            padding: 25px;
+            background: #f9f9f9;
+            border-left: 3px solid #c9a961;
+        }
+        
+        .faq-item h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+        
+        .faq-item p {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 0;
+        }
+        
+        .footer {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 3px solid #c9a961;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .footer p {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .cta-box {
+            background: #1a1a1a;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            margin: 50px 0 30px;
+        }
+        
+        .cta-box h3 {
+            color: #c9a961;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        
+        .cta-box p {
+            color: #ccc;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .disclaimer {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        @media print {
+            body {
+                padding: 20px;
+                max-width: 100%;
+            }
+            
+            .pricing-card:hover {
+                transform: none;
+                box-shadow: none;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-table {
+                font-size: 13px;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">✈️</div>
+        <h1>Private Jet Charter Pricing Guide</h1>
+        <p class="subtitle">Your Complete Reference to Private Aviation Costs & Value</p>
+    </div>
+
+    <h2>1. Private Jet Charter Pricing Breakdown</h2>
+    <p>Understanding private jet charter pricing starts with knowing the aircraft categories. Hourly rates vary based on aircraft size, range, amenities, and operational costs. Below is a comprehensive breakdown of typical pricing across the three main categories of private jets.</p>
+    
+    <div class="pricing-grid">
+        <div class="pricing-card">
+            <h4>Light Jets</h4>
+            <div class="price">$5,000 - $8,000/hr</div>
+            <ul>
+                <li>4-6 passengers</li>
+                <li>1,500-2,000 nm range</li>
+                <li>3-4 hour flight time</li>
+                <li>Compact cabin space</li>
+                <li>Ideal for regional trips</li>
+                <li>Examples: Phenom 300, Citation CJ3</li>
+            </ul>
+        </div>
+        
+        <div class="pricing-card">
+            <h4>Midsize Jets</h4>
+            <div class="price">$8,000 - $12,000/hr</div>
+            <ul>
+                <li>6-8 passengers</li>
+                <li>2,000-3,000 nm range</li>
+                <li>4-5 hour flight time</li>
+                <li>Stand-up cabin height</li>
+                <li>Cross-country capable</li>
+                <li>Examples: Citation XLS, Hawker 800</li>
+            </ul>
+        </div>
+        
+        <div class="pricing-card">
+            <h4>Heavy Jets</h4>
+            <div class="price">$12,000 - $18,000+/hr</div>
+            <ul>
+                <li>10-16 passengers</li>
+                <li>4,000-7,000+ nm range</li>
+                <li>7-10+ hour flight time</li>
+                <li>Full stand-up cabin</li>
+                <li>International range</li>
+                <li>Examples: Gulfstream GIV, Challenger 604</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="highlight-box">
+        <h3>💰 Empty Leg Deals: 50-75% Off Standard Rates</h3>
+        <p>Empty leg flights occur when an aircraft needs to reposition without passengers. These one-way flights offer substantial savings—typically 50-75% off standard charter rates.</p>
+        <p><strong>Example:</strong> A light jet that normally costs $6,000/hour may be available for $2,500-$3,000/hour on an empty leg route.</p>
+    </div>
+
+    <h2>2. Cost Comparison: Private Charter vs. First-Class Commercial</h2>
+    <p>While private aviation appears more expensive at first glance, the true cost comparison reveals a different story when you factor in hidden expenses, time value, and the complete travel experience.</p>
+    
+    <table class="comparison-table">
+        <tr>
+            <th>Private Charter</th>
+            <th>First-Class Commercial</th>
+        </tr>
+        <tr>
+            <td>Depart on your schedule</td>
+            <td>Fixed airline schedules</td>
+        </tr>
+        <tr>
+            <td>Private terminals (FBOs)</td>
+            <td>Major commercial airports</td>
+        </tr>
+        <tr>
+            <td>Arrive 15 minutes before departure</td>
+            <td>Arrive 2-3 hours before departure</td>
+        </tr>
+        <tr>
+            <td>Direct flights to 5,000+ airports</td>
+            <td>Limited to major hub airports</td>
+        </tr>
+        <tr>
+            <td>No security lines or boarding queues</td>
+            <td>TSA security, boarding groups</td>
+        </tr>
+        <tr>
+            <td>Productive work environment</td>
+            <td>Limited privacy, distractions</td>
+        </tr>
+        <tr>
+            <td>Catering to your preferences</td>
+            <td>Standard first-class menu</td>
+        </tr>
+        <tr>
+            <td>Ground transportation coordinated</td>
+            <td>Separate arrangements needed</td>
+        </tr>
+    </table>
+
+    <h3>The Hidden Costs of Commercial First-Class</h3>
+    <p>When calculating the true cost of commercial travel, consider these often-overlooked expenses:</p>
+    <ul style="margin: 20px 0 20px 40px; line-height: 2;">
+        <li><strong>Hotel nights:</strong> Overnight stays due to connections or schedule constraints ($300-$800/night)</li>
+        <li><strong>Rental cars/ground transport:</strong> Airport transfers and local transportation ($100-$400/trip)</li>
+        <li><strong>Meals:</strong> Airport dining and in-flight purchases beyond included meals ($50-$200)</li>
+        <li><strong>Time lost:</strong> For business travelers, 4-6 hours of lost productivity per trip (value varies by professional)</li>
+        <li><strong>Connection risks:</strong> Missed meetings due to delays, cancellations, or baggage issues</li>
+        <li><strong>Ground time:</strong> Extended layovers that add hours to journey time</li>
+    </ul>
+
+    <h3>ROI for Business Travelers</h3>
+    <p>For executives and business owners, private aviation often delivers positive ROI through:</p>
+    <ul style="margin: 20px 0 20px 40px; line-height: 2;">
+        <li><strong>Same-day round trips:</strong> Visit multiple cities in one day without overnight stays</li>
+        <li><strong>Productive flight time:</strong> Confidential calls, focused work, meeting preparation</li>
+        <li><strong>Reduced fatigue:</strong> Less travel stress means better performance at destination</li>
+        <li><strong>Flexibility:</strong> Change plans instantly when business needs shift</li>
+        <li><strong>Team efficiency:</strong> Bring key team members together for on-the-road collaboration</li>
+    </ul>
+
+    <h2>3. Empty Leg Deals Explained</h2>
+    <p>Empty leg flights represent one of the best values in private aviation. Understanding how they work can unlock significant savings for flexible travelers.</p>
+
+    <h3>What Are Empty Leg Flights?</h3>
+    <p>When a private jet is chartered for a one-way trip, it often needs to return to its home base or reposition to pick up the next client. These repositioning flights—called "empty legs," "deadhead flights," or "ferry flights"—would otherwise fly without revenue-generating passengers.</p>
+    <p>Operators prefer to sell these seats at discounted rates rather than fly empty, creating opportunities for cost-conscious travelers.</p>
+
+    <h3>How to Access Empty Leg Deals</h3>
+    <ol style="margin: 20px 0 20px 40px; line-height: 2;">
+        <li><strong>Join deal alert lists:</strong> Subscribe to empty leg notifications from charter providers</li>
+        <li><strong>Be flexible with dates:</strong> Empty legs are date-specific; flexibility increases options</li>
+        <li><strong>Consider nearby airports:</strong> Expanding your departure/arrival radius reveals more deals</li>
+        <li><strong>Book with short notice:</strong> Many empty legs are posted 24-72 hours before departure</li>
+        <li><strong>Work with a broker:</strong> Experienced brokers track empty leg inventory across multiple operators</li>
+    </ol>
+
+    <h3>Typical Savings</h3>
+    <div class="pricing-grid">
+        <div class="pricing-card">
+            <h4>Light Jet Empty Leg</h4>
+            <div class="price">$2,500 - $4,000/hr</div>
+            <p style="font-size: 14px; margin-top: 10px;">Regular: $5,000-$8,000/hr<br><strong>Savings: 50-60%</strong></p>
+        </div>
+        
+        <div class="pricing-card">
+            <h4>Midsize Jet Empty Leg</h4>
+            <div class="price">$4,000 - $6,000/hr</div>
+            <p style="font-size: 14px; margin-top: 10px;">Regular: $8,000-$12,000/hr<br><strong>Savings: 50-65%</strong></p>
+        </div>
+        
+        <div class="pricing-card">
+            <h4>Heavy Jet Empty Leg</h4>
+            <div class="price">$6,000 - $9,000/hr</div>
+            <p style="font-size: 14px; margin-top: 10px;">Regular: $12,000-$18,000+/hr<br><strong>Savings: 50-75%</strong></p>
+        </div>
+    </div>
+
+    <h2>4. Booking Process</h2>
+    <p>Chartering a private jet is straightforward when you understand the process. Here's what to expect from initial inquiry to wheels-up.</p>
+
+    <ul class="step-list">
+        <li>
+            <strong>Submit Your Trip Request</strong>
+            Provide departure/arrival airports, preferred dates/times, passenger count, and any special requirements (pets, catering, ground transport).
+        </li>
+        <li>
+            <strong>Receive Aircraft Options & Quotes</strong>
+            Within 1-4 hours, you'll receive tailored options with aircraft details, pricing breakdown, and availability. Multiple aircraft categories may be presented for comparison.
+        </li>
+        <li>
+            <strong>Select Aircraft & Review Contract</strong>
+            Choose your preferred option and review the charter agreement. This includes terms, cancellation policy, and what's included in your quote.
+        </li>
+        <li>
+            <strong>Secure Booking with Deposit</strong>
+            Most operators require a deposit (typically 25-50%) to secure the aircraft. Payment is processed via wire transfer, credit card, or approved payment method.
+        </li>
+        <li>
+            <strong>Provide Passenger Details</strong>
+            Submit passenger names, weights (for weight & balance), special requests, and catering preferences. This is typically due 24-48 hours before departure.
+        </li>
+        <li>
+            <strong>Receive Final Confirmation</strong>
+            12-24 hours before departure, you'll receive final details including tail number, FBO location, pilot contact, and exact departure time.
+        </li>
+        <li>
+            <strong>Arrive at FBO & Depart</strong>
+            Arrive 15-20 minutes before departure at the Fixed Base Operator (FBO) terminal. Enjoy private lounge amenities before boarding your aircraft.
+        </li>
+    </ul>
+
+    <h3>Timeline: How Far in Advance to Book</h3>
+    <ul style="margin: 20px 0 20px 40px; line-height: 2;">
+        <li><strong>Peak times (holidays, major events):</strong> 2-4 weeks recommended</li>
+        <li><strong>Standard travel periods:</strong> 3-7 days typically sufficient</li>
+        <li><strong>Last-minute availability:</strong> Often possible within 24 hours (subject to aircraft availability)</li>
+        <li><strong>Empty leg deals:</strong> Usually 24-72 hours before departure</li>
+    </ul>
+
+    <h3>What's Included in Your Charter Price</h3>
+    <ul style="margin: 20px 0 20px 40px; line-height: 2;">
+        <li>Aircraft and crew (pilots, flight attendants on larger aircraft)</li>
+        <li>Fuel and standard insurance</li>
+        <li>Landing fees and handling charges</li>
+        <li>Standard catering (refreshments, light meals)</li>
+        <li>Ground transportation coordination</li>
+        <li>Flight planning and weather monitoring</li>
+        <li>24/7 operational support</li>
+    </ul>
+    <p><em>Note: Premium catering, specific ground transport, de-icing, and international fees may be additional.</em></p>
+
+    <h2>5. Frequently Asked Questions</h2>
+    
+    <div class="faq-item">
+        <h4>What safety certifications should I look for?</h4>
+        <p>Reputable operators maintain ARG/US Platinum or Gold ratings, Wyvern Wingman certification, and/or IS-BAO Stage II or III registration. All charter flights operate under FAA Part 135 regulations, which require rigorous maintenance schedules, pilot training, and operational oversight. Always verify your operator's safety credentials before booking.</p>
+    </div>
+
+    <div class="faq-item">
+        <h4>Can I bring pets on private flights?</h4>
+        <p>Yes—private aviation is exceptionally pet-friendly. Most operators welcome pets in the cabin with you. Some may require advance notice, health certificates, or pet carriers. Certain operators provide pet amenities (water bowls, blankets, treats). Always disclose pets when booking to ensure appropriate aircraft preparation.</p>
+    </div>
+
+    <div class="faq-item">
+        <h4>What is the cancellation policy?</h4>
+        <p>Cancellation terms vary by operator and fare type. Standard charters typically allow free cancellation 48-72 hours before departure, with partial charges for later cancellations. Empty leg deals often have stricter policies (non-refundable or limited refund windows). Jet cards and memberships have their own terms. Always review cancellation policies before booking.</p>
+    </div>
+
+    <div class="faq-item">
+        <h4>What payment methods are accepted?</h4>
+        <p>Most operators accept wire transfers, major credit cards (Visa, Mastercard, American Express), and sometimes corporate checks. Wire transfers are preferred for large transactions and may expedite booking confirmation. Credit cards offer convenience and potential rewards but may have transaction limits. Payment is typically required before departure.</p>
+    </div>
+
+    <div class="faq-item">
+        <h4>Are there weight or baggage restrictions?</h4>
+        <p>Private jets have more generous baggage allowances than commercial airlines, but weight and balance calculations are critical for flight safety. Typical allowances range from 50-100 lbs per passenger depending on aircraft size. Oversized items (golf clubs, skis, musical instruments) are usually accommodated with advance notice. Share your baggage needs during booking.</p>
+    </div>
+
+    <div class="faq-item">
+        <h4>Can I bring alcohol on board?</h4>
+        <p>Yes, you may bring your preferred beverages, though most operators provide complimentary standard bar service. Premium or specific brand requests can be arranged in advance. All passengers must be of legal drinking age. The pilot in command has final authority regarding alcohol consumption on board.</p>
+    </div>
+
+    <div class="faq-item">
+        <h4>What happens if weather delays my flight?</h4>
+        <p>Safety is always the priority. If weather makes travel unsafe, your flight will be delayed or rescheduled. Private aviation offers more flexibility than commercial airlines—you can often depart from alternative nearby airports or adjust timing to avoid weather systems. Your operator will proactively communicate options and work to minimize disruption.</p>
+    </div>
+
+    <div class="cta-box">
+        <h3>Ready to Experience Private Aviation?</h3>
+        <p>Get personalized quotes, access empty leg deals, and discover how private charter fits your travel needs.</p>
+        <p style="color: #c9a961; font-size: 16px; margin-top: 20px;"><strong>Contact The Jet Standard for your complimentary consultation.</strong></p>
+    </div>
+
+    <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Pricing shown is representative and subject to change based on aircraft availability, routing, fuel costs, seasonal demand, and specific operational requirements. All rates are estimates and final pricing will be confirmed in your charter agreement. This guide is for informational purposes only and does not constitute a binding offer.</p>
+    </div>
+
+    <div class="footer">
+        <p><strong>The Jet Standard</strong></p>
+        <p>Premium Private Jet Charter & Aviation Services</p>
+        <p style="margin-top: 20px; font-size: 12px;">© 2026 The Jet Standard. All rights reserved.</p>
+    </div>
+</body>
+</html>
