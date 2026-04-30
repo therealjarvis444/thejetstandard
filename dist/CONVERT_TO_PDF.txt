@@ -1,0 +1,14 @@
+To convert the pricing guide to PDF:
+
+Option 1: Browser (Easiest)
+1. Open private-jet-pricing-guide.html in Chrome/Safari
+2. Press Cmd+P (Print)
+3. Select "Save as PDF" as destination
+4. Click Save
+
+Option 2: Install WeasyPrint
+pip3 install weasyprint
+python3 -c "from weasyprint import HTML; HTML('private-jet-pricing-guide.html').write_pdf('private-jet-pricing-guide.pdf')"
+
+Option 3: Online Converter
+Use: https://html2pdf.com/ or similar service

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Thank you for downloading the Private Jet Pricing Guide from The Jet Standard.">
+    <title>Thank You | The Jet Standard - Private Jet Pricing Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container nav-container">
+            <a href="/" class="logo" aria-label="The Jet Standard Home">
+                <span class="logo-text">THE JET STANDARD</span>
+            </a>
+            <div class="nav-actions">
+                <a href="/" class="btn btn-secondary">Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="thank-you-hero" role="main">
+        <div class="thank-you-content">
+            <div class="thank-you-icon">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div>
+            <h1 class="thank-you-heading">Your Guide Is On the Way!</h1>
+            <p class="thank-you-subhead">
+                Check your inbox in the next few minutes. We've sent the <strong>Private Jet Pricing Guide</strong> 
+                to your email along with a direct download link below.
+            </p>
+            <div class="thank-you-cta-group">
+                <a href="assets/private-jet-pricing-guide.pdf" class="btn btn-primary btn-lg" download id="download-guide-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download Guide Now
+                </a>
+                <a href="https://villiers.ai/?id=G2YINT" class="btn btn-primary btn-lg" target="_blank" rel="noopener noreferrer" id="get-quote-btn">
+                    Get a Free Quote
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="thank-you-bonus">
+                <h3>Ready to book your first private flight?</h3>
+                <p>Get a free, no-obligation quote in 60 seconds. Compare aircraft options and pricing for your route.</p>
+                <a href="https://villiers.ai/?id=G2YINT" class="btn btn-primary btn-block" target="_blank" rel="noopener noreferrer">
+                    Request Your Free Quote
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-bottom">
+                <div class="footer-disclosure">
+                    <p><strong>Affiliate Disclosure:</strong> The Jet Standard is an independent affiliate partner of Villiers Jets. We may earn a commission when you book through our links — at no extra cost to you.</p>
+                </div>
+                <div class="footer-legal">
+                    <p>&copy; 2026 The Jet Standard. All rights reserved.</p>
+                    <div class="footer-legal-links">
+                        <a href="privacy.html">Privacy Policy</a>
+                        <a href="terms.html">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Track download and quote clicks
+    (function() {
+        const downloadBtn = document.getElementById('download-guide-btn');
+        const getQuoteBtn = document.getElementById('get-quote-btn');
+
+        function trackEvent(eventName, eventData) {
+            if (typeof gtag === 'function') {
+                gtag('event', eventName, eventData);
+            }
+            console.log('Event:', eventName, eventData);
+        }
+
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', function() {
+                trackEvent('guide_download', {
+                    event_category: 'lead_magnet',
+                    event_label: 'private_jet_pricing_guide',
+                    value: 1
+                });
+            });
+        }
+
+        if (getQuoteBtn) {
+            getQuoteBtn.addEventListener('click', function() {
+                trackEvent('quote_click_from_thankyou', {
+                    event_category: 'conversion',
+                    event_label: 'thank_you_page',
+                    value: 1
+                });
+            });
+        }
+    })();
+    </script>
+</body>
+</html>
