@@ -1,10 +1,6 @@
 /**
  * THE JET STANDARD - Landing Page JavaScript
  * Minimal, performant, accessibility-focused
- * 
- * PATCHED: 2026-05-02 — Added MCS webhook integration
- * Webhook endpoint: /api/webhooks/subscribe
- * Auto-enrolls subscribers and triggers welcome email
  */
 
 (function() {
@@ -19,15 +15,14 @@
     const cookieConsent = document.getElementById('cookie-consent');
     const cookieAccept = document.getElementById('cookie-accept');
     const cookieDecline = document.getElementById('cookie-decline');
+    
+    // Email Capture Popup
     const emailCapturePopup = document.getElementById('email-capture-popup');
-    const popupEmailForm = document.getElementById('popup-email-form');
-    const popupClose = document.getElementById('popup-close');
+    const popupClose = document.querySelector('.popup-close');
     const popupDecline = document.getElementById('popup-decline');
-
-    // Affiliate links that trigger popup
-    const affiliateLink = 'https://villiers.ai/?id=G2YINT';
-    let isPricingGuideFlow = false;
+    const popupEmailForm = document.getElementById('popup-email-form');
     let pendingRedirect = null;
+    let isPricingGuideFlow = false;
 
     // ============================================
     // Analytics Helper
@@ -36,91 +31,140 @@
         if (typeof gtag === 'function') {
             gtag('event', eventName, params);
         }
+        if (typeof fbq === 'function') {
+            fbq('track', eventName, params);
+        }
     }
 
     // ============================================
     // Mobile Menu
     // ============================================
-    if (mobileMenuBtn && mobileMenu && mobileMenuClose) {
+    if (mobileMenuBtn && mobileMenu) {
         mobileMenuBtn.addEventListener('click', function() {
-            mobileMenu.classList.add('active');
-            mobileMenuBtn.setAttribute('aria-expanded', 'true');
-            trackEvent('mobile_menu_open', { event_category: 'navigation' });
-        });
-
-        mobileMenuClose.addEventListener('click', function() {
-            mobileMenu.classList.remove('active');
-            mobileMenuBtn.setAttribute('aria-expanded', 'false');
-        });
-
-        mobileMenu.querySelectorAll('a').forEach(function(link) {
-            link.addEventListener('click', function() {
-                mobileMenu.classList.remove('active');
-                mobileMenuBtn.setAttribute('aria-expanded', 'false');
-            });
+            mobileMenu.classList.add('show');
+            document.body.style.overflow = 'hidden';
         });
     }
+
+    if (mobileMenuClose && mobileMenu) {
+        mobileMenuClose.addEventListener('click', function() {
+            mobileMenu.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+    }
+
+    // Close mobile menu on link click
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+    mobileLinks.forEach(function(link) {
+        link.addEventListener('click', function() {
+            mobileMenu.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+    });
 
     // ============================================
     // Email Capture Popup
     // ============================================
-    function showPopup(isGuideFlow, redirectUrl) {
-        isPricingGuideFlow = isGuideFlow;
-        pendingRedirect = redirectUrl || null;
+    function showPopup(redirectUrl, pricingGuideFlow) {
         if (emailCapturePopup) {
             emailCapturePopup.classList.add('show');
             trackEvent('email_popup_shown', { event_category: 'engagement', value: 1 });
+            pendingRedirect = redirectUrl;
+            isPricingGuideFlow = pricingGuideFlow || false;
         }
     }
 
     function hidePopup() {
         if (emailCapturePopup) {
             emailCapturePopup.classList.remove('show');
-            trackEvent('email_popup_closed_x', { event_category: 'engagement', value: 1 });
         }
     }
 
-    // Show popup on affiliate link clicks
+    // Hook all affiliate links to show popup
+    const affiliateLink = 'https://villiers.ai/?id=G2YINT';
+    
+    // Hero CTA buttons
+    const heroCTAs = document.querySelectorAll('#hero-cta-primary, #hero-cta-secondary');
+    heroCTAs.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showPopup(affiliateLink);
+        });
+    });
+
+    // Pricing guide triggers
+    const pricingGuideTriggers = document.querySelectorAll('[id*="pricing-guide-trigger"]');
+    pricingGuideTriggers.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showPopup(affiliateLink, true);
+        });
+    });
+
+    // All other affiliate links
     document.querySelectorAll('a[href*="villiers.ai"]').forEach(function(link) {
+        // Skip if it's a direct PDF download
+        if (link.getAttribute('download')) return;
+        
         link.addEventListener('click', function(e) {
-            if (!localStorage.getItem('email-captured')) {
-                e.preventDefault();
-                showPopup(false, link.href);
+            e.preventDefault();
+            showPopup(link.href);
+        });
+    });
+
+    // ============================================
+    // POPUP EVENT LISTENERS
+    // ============================================
+
+    // X button - JUST CLOSE, NO REDIRECT
+    if (popupClose) {
+        popupClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            pendingRedirect = null; // Clear redirect
+            isPricingGuideFlow = false;
+            hidePopup();
+            trackEvent('email_popup_closed_x', { event_category: 'engagement', value: 1 });
+        });
+    }
+
+    // Decline button - close AND redirect
+    if (popupDecline) {
+        popupDecline.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            trackEvent('email_popup_declined', { event_category: 'engagement', value: 1 });
+            const redirect = pendingRedirect;
+            pendingRedirect = null;
+            isPricingGuideFlow = false;
+            hidePopup();
+            if (redirect) {
+                window.open(redirect, '_blank');
             }
         });
-    });
-
-    // Close popup
-    if (popupClose) {
-        popupClose.addEventListener('click', hidePopup);
     }
 
-    if (popupDecline) {
-        popupDecline.addEventListener('click', function() {
-            hidePopup();
-            trackEvent('email_popup_declined', { event_category: 'engagement', value: 1 });
-        });
-    }
-
-    // Close on escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && emailCapturePopup && emailCapturePopup.classList.contains('show')) {
-            hidePopup();
-        }
-    });
-
-    // Close on overlay click
+    // Click outside - just close, NO REDIRECT
     if (emailCapturePopup) {
         emailCapturePopup.addEventListener('click', function(e) {
             if (e.target === emailCapturePopup || e.target.classList.contains('popup-overlay')) {
+                pendingRedirect = null; // Clear redirect
+                isPricingGuideFlow = false;
                 hidePopup();
             }
         });
     }
 
-    // ============================================
-    // Form submission — with MCS webhook integration
-    // ============================================
+    // Escape key - just close, NO REDIRECT
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && emailCapturePopup && emailCapturePopup.classList.contains('show')) {
+            pendingRedirect = null;
+            isPricingGuideFlow = false;
+            hidePopup();
+        }
+    });
+
+    // Form submission
     if (popupEmailForm) {
         popupEmailForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -136,17 +180,7 @@
             }
 
             // Track conversion
-            trackEvent('email_popup_conversion', {
-                event_category: 'conversion',
-                event_label: 'email_capture',
-                value: 1
-            });
-
-            // ============================================
             // TWO-STEP AUTHENTICATED API FLOW
-            // Step 1: Create subscriber with auth
-            // Step 2: Trigger immediate send with auth
-            // ============================================
             const firstName = name.split(' ')[0] || '';
             const lastName = name.split(' ').slice(1).join(' ') || '';
             
@@ -155,7 +189,6 @@
             const AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjM5ZmI4Mi00N2Y2LTUwMzUtODRjYy1lODE0N2MzNGY3NzMiLCJleHAiOjE3Nzc3ODMwNzYsInR5cGUiOiJhY2Nlc3MiLCJyb2xlIjoiY29tbWFuZGVyIiwidXNlcm5hbWUiOiJhcmNoZXIifQ.UmvuOpOQrquhssXt54KURTPpp4z56T8Wv9PtKKFxmDM';
             const X_CAMPAIGN_ID = '0a2bfebe-373c-5219-9c6c-b26746f49de7';
             
-            // STEP 1: Create subscriber
             fetch(API_BASE + '/api/v1/email-campaigns/subscribers', {
                 method: 'POST',
                 headers: {
@@ -176,15 +209,14 @@
             })
             .then(function(response) {
                 if (!response.ok) {
-                    console.error('Step 1 (subscriber) error:', response.status);
+                    console.error('Step 1 error:', response.status);
                     throw new Error('Subscriber creation failed: ' + response.status);
                 }
                 return response.json();
             })
             .then(function(subscriberData) {
-                console.log('Step 1 success — subscriber created:', subscriberData);
+                console.log('Step 1 success — subscriber:', subscriberData.id || subscriberData.subscriber_id);
                 
-                // STEP 2: Trigger immediate send
                 return fetch(API_BASE + '/api/v1/email-campaigns/' + CAMPAIGN_ID + '/send-now', {
                     method: 'POST',
                     headers: {
@@ -194,29 +226,28 @@
                         'X-Campaign-ID': X_CAMPAIGN_ID
                     },
                     body: JSON.stringify({
-                        subscriber_id: subscriberData.subscriber_id || subscriberData.id,
+                        subscriber_id: subscriberData.id || subscriberData.subscriber_id,
                         email: email
                     })
                 });
             })
             .then(function(response) {
                 if (!response.ok) {
-                    console.error('Step 2 (send-now) error:', response.status);
-                    // Don't throw — subscriber was still created
-                    return response.text().then(function(text) {
-                        console.error('Send-now response:', text);
-                        return { warning: 'Email send queued but not immediate' };
-                    });
+                    console.error('Step 2 error:', response.status);
+                    return { warning: 'Send failed but subscriber created' };
                 }
                 return response.json();
             })
             .then(function(sendData) {
-                console.log('Step 2 success — email triggered:', sendData);
+                console.log('Step 2 success — email sent:', sendData.status);
             })
             .catch(function(err) {
-                // Log but don't block user experience
                 console.error('API flow error:', err.message);
             });
+            trackEvent('email_popup_conversion', {
+                event_category: 'conversion',
+                event_label: 'email_capture',
+                value: 1
             });
 
             const redirect = pendingRedirect;
@@ -242,7 +273,6 @@
                 }
             }
             isPricingGuideFlow = false;
-            localStorage.setItem('email-captured', 'true');
         });
     }
 
@@ -281,16 +311,43 @@
     }
 
     // ============================================
-    // Smooth Scroll for Anchor Links
+    // Smooth Scroll
     // ============================================
     document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
         anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const target = document.querySelector(targetId);
             if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                e.preventDefault();
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
         });
+    });
+
+    // ============================================
+    // Intersection Observer for Animations
+    // ============================================
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-in').forEach(function(el) {
+        observer.observe(el);
     });
 
     // ============================================
@@ -316,53 +373,27 @@
     }
 
     // ============================================
-    // Intersection Observer for Animations
+    // Performance: Passive Event Listeners
     // ============================================
-    if ('IntersectionObserver' in window) {
-        const revealElements = document.querySelectorAll('.reveal');
-        const revealObserver = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        revealElements.forEach(function(el) {
-            revealObserver.observe(el);
+    // Mark touch events as passive for better scroll performance
+    let supportsPassive = false;
+    try {
+        const opts = Object.defineProperty({}, 'passive', {
+            get: function() {
+                supportsPassive = true;
+                return true;
+            }
         });
+        window.addEventListener('test', null, opts);
+        window.removeEventListener('test', null, opts);
+    } catch (e) {
+        supportsPassive = false;
     }
 
     // ============================================
-    // Performance: Preload critical resources
+    // Console Welcome Message
     // ============================================
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            // Preload hero image if present
-            const heroImg = document.querySelector('.hero-bg img');
-            if (heroImg && heroImg.dataset.src) {
-                const preloadLink = document.createElement('link');
-                preloadLink.rel = 'preload';
-                preloadLink.as = 'image';
-                preloadLink.href = heroImg.dataset.src;
-                document.head.appendChild(preloadLink);
-            }
-        });
-    }
-
-    // ============================================
-    // Pricing Guide CTA Flow
-    // ============================================
-    document.querySelectorAll('[data-action="pricing-guide"]').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (!localStorage.getItem('email-captured')) {
-                showPopup(true, null);
-            } else {
-                window.open(affiliateLink, '_blank');
-            }
-        });
-    });
+    console.log('%c✈️ The Jet Standard', 'font-size: 24px; font-weight: bold; color: #D4AF37;');
+    console.log('%cPrivate Jet Charter Landing Page', 'font-size: 14px; color: #666;');
 
 })();
