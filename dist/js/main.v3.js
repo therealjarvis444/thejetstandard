@@ -143,35 +143,80 @@
             });
 
             // ============================================
-            // Send to MCS webhook — auto-enroll + schedule welcome email
+            // TWO-STEP AUTHENTICATED API FLOW
+            // Step 1: Create subscriber with auth
+            // Step 2: Trigger immediate send with auth
             // ============================================
             const firstName = name.split(' ')[0] || '';
             const lastName = name.split(' ').slice(1).join(' ') || '';
-
-            fetch('/api/webhooks/subscribe', {
+            
+            const API_BASE = 'https://inspiration-shoot-hunter-telecharger.trycloudflare.com';
+            const CAMPAIGN_ID = 'b9b121b5-b013-45ab-b5d7-88111f83e253';
+            const AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjM5ZmI4Mi00N2Y2LTUwMzUtODRjYy1lODE0N2MzNGY3NzMiLCJleHAiOjE3Nzc3ODMwNzYsInR5cGUiOiJhY2Nlc3MiLCJyb2xlIjoiY29tbWFuZGVyIiwidXNlcm5hbWUiOiJhcmNoZXIifQ.UmvuOpOQrquhssXt54KURTPpp4z56T8Wv9PtKKFxmDM';
+            const X_CAMPAIGN_ID = '0a2bfebe-373c-5219-9c6c-b26746f49de7';
+            
+            // STEP 1: Create subscriber
+            fetch(API_BASE + '/api/v1/email-campaigns/subscribers', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + AUTH_TOKEN,
+                    'X-Campaign-ID': X_CAMPAIGN_ID
                 },
                 body: JSON.stringify({
                     email: email,
                     first_name: firstName,
                     last_name: lastName,
-                    campaign_id: 'b9b121b5-b013-45ab-b5d7-88111f83e253',
+                    campaign_id: CAMPAIGN_ID,
                     utm_source: 'website',
-                    utm_medium: 'popup_form'
+                    utm_medium: 'popup_form',
+                    status: 'active'
                 })
-            }).then(function(response) {
+            })
+            .then(function(response) {
                 if (!response.ok) {
-                    console.error('MCS webhook error:', response.status);
+                    console.error('Step 1 (subscriber) error:', response.status);
+                    throw new Error('Subscriber creation failed: ' + response.status);
                 }
                 return response.json();
-            }).then(function(data) {
-                console.log('MCS webhook success:', data);
-            }).catch(function(err) {
-                // Silently fail — don't block user experience
-                console.error('MCS webhook failed:', err);
+            })
+            .then(function(subscriberData) {
+                console.log('Step 1 success — subscriber created:', subscriberData);
+                
+                // STEP 2: Trigger immediate send
+                return fetch(API_BASE + '/api/v1/email-campaigns/' + CAMPAIGN_ID + '/send-now', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + AUTH_TOKEN,
+                        'X-Campaign-ID': X_CAMPAIGN_ID
+                    },
+                    body: JSON.stringify({
+                        subscriber_id: subscriberData.subscriber_id || subscriberData.id,
+                        email: email
+                    })
+                });
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    console.error('Step 2 (send-now) error:', response.status);
+                    // Don't throw — subscriber was still created
+                    return response.text().then(function(text) {
+                        console.error('Send-now response:', text);
+                        return { warning: 'Email send queued but not immediate' };
+                    });
+                }
+                return response.json();
+            })
+            .then(function(sendData) {
+                console.log('Step 2 success — email triggered:', sendData);
+            })
+            .catch(function(err) {
+                // Log but don't block user experience
+                console.error('API flow error:', err.message);
+            });
             });
 
             const redirect = pendingRedirect;
