@@ -26,7 +26,8 @@ export default {
 
     try {
       const body = await request.json();
-      const response = await fetch('http://192.168.0.12:8000/api/v1/webhooks/subscribe', {
+      // Use localtunnel to reach the local backend
+      const response = await fetch('https://mcs-jetstandard.loca.lt/api/v1/webhooks/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
