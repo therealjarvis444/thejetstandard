@@ -22,7 +22,7 @@ export default {
 
       try {
         const body = await request.json();
-        const response = await fetch('https://mcs-jetstandard.loca.lt/api/v1/webhooks/subscribe', {
+        const response = await fetch('https://counters-stored-sensitive-additionally.trycloudflare.com/api/v1/webhooks/subscribe', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
