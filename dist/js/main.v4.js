@@ -148,7 +148,7 @@
             const firstName = name.split(' ')[0] || '';
             const lastName = name.split(' ').slice(1).join(' ') || '';
 
-            fetch('https://mcs-jetstandard.loca.lt/api/v1/webhooks/subscribe', {
+            fetch('/api/webhooks/subscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
