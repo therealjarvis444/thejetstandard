@@ -51,19 +51,7 @@ export default {
       }
     }
     
-    // Redirect old main.v3.js to new JS
-    if (url.pathname === '/js/main.v3.js') {
-      const newUrl = new URL('/js/main-1777719806.js', url.origin);
-      return new Response(null, {
-        status: 301,
-        headers: {
-          'Location': newUrl.toString(),
-          'Cache-Control': 'public, max-age=0, must-revalidate',
-        },
-      });
-    }
-    
-    // For all other requests, serve from ASSETS
+    // Serve static assets from ASSETS
     return env.ASSETS.fetch(request);
   }
 };
