@@ -178,10 +178,12 @@
     
     // Form submission
     if (popupEmailForm) {
-        popupEmailForm.addEventListener('submit', function(e) {
+        popupEmailForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            const name = document.getElementById('popup-name').value;
-            const email = document.getElementById('popup-email').value;
+            e.stopPropagation();
+            
+            const name = document.getElementById('popup-name').value.trim();
+            const email = document.getElementById('popup-email').value.trim();
             const consent = document.getElementById('popup-consent').checked;
             
             if (!consent) {
@@ -189,41 +191,65 @@
                 return;
             }
             
-            // Track conversion
-            trackEvent('email_popup_conversion', {
-                event_category: 'conversion',
-                event_label: 'email_capture',
-                value: 1
-            });
+            // Split name into first/last
+            const nameParts = name.split(' ');
+            const firstName = nameParts[0];
+            const lastName = nameParts.slice(1).join(' ') || '';
             
-            // Here you would integrate with your ESP (ConvertKit, HubSpot, etc.)
-            // to send the welcome email with pricing guide link
-            // For now, we'll redirect to Villiers
-            
-            if (isPricingGuideFlow) {
-                // Show success message with pricing guide download
-                const formContainer = popupEmailForm.parentElement;
-                formContainer.innerHTML = `
-                    <div class="form-success">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-success); margin: 0 auto 1rem;">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                            <polyline points="22 4 12 14.01 9 11.01"/>
-                        </svg>
-                        <h3>You're In!</h3>
-                        <p style="margin-bottom: 1.5rem;">Your pricing guide is on its way to <strong>${email}</strong>. Check your inbox!</p>
-                        <p style="font-size: 0.875rem; color: var(--color-text-light); margin-bottom: 1.5rem;">Ready to get your free quote?</p>
-                        <a href="https://villiers.ai/?id=G2YINT" class="btn btn-primary btn-lg" target="_blank" rel="noopener noreferrer">
-                            Get Your Free Quote
-                        </a>
-                    </div>
-                `;
-            } else {
-                // Standard flow - just redirect
-                if (pendingRedirect) {
-                    window.open(pendingRedirect, '_blank');
-                    pendingRedirect = null;
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/email-campaigns/subscribers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjQyM2M5OC0xYTk1LTVhNWQtYmUxYi0yZTkwYmQwZTlkYWMiLCJleHAiOjE3Nzc3ODMyODIsInR5cGUiOiJhY2Nlc3MiLCJyb2xlIjoib3BlcmF0b3IiLCJ1c2VybmFtZSI6ImNoZXJ5bCJ9.euKGaTqcNDP0uR_fI5b3h3k_Q3UKqBp7I4UngUNqV2k',
+                        'X-Campaign-ID': '0a2bfebe-373c-5219-9c6c-b26746f49de7'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        first_name: firstName,
+                        last_name: lastName,
+                        extra_data: {
+                            source: 'website_popup',
+                            page_url: window.location.href,
+                            consent: true
+                        }
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Track conversion
+                    trackEvent('email_popup_conversion', {
+                        event_category: 'conversion',
+                        event_label: 'email_capture_success',
+                        value: 1
+                    });
+                    
+                    // Show success
+                    const formContainer = popupEmailForm.parentElement;
+                    formContainer.innerHTML = `
+                        <div class="form-success">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-success); margin: 0 auto 1rem;">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <h3>You're In!</h3>
+                            <p style="margin-bottom: 1.5rem;">Your pricing guide is on its way to <strong>${email}</strong>. Check your inbox!</p>
+                            <p style="font-size: 0.875rem; color: var(--color-text-light); margin-bottom: 1.5rem;">Ready to get your free quote?</p>
+                            <a href="https://villiers.ai/?id=G2YINT" class="btn btn-primary btn-lg" target="_blank" rel="noopener noreferrer">
+                                Get Your Free Quote
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Server error:', response.status, errorData);
+                    alert('Something went wrong. Please try again or email us at thejetstandard@gmail.com');
                 }
-                hidePopup();
+            } catch (error) {
+                console.error('Form submission failed:', error);
+                alert('Something went wrong. Please try again or email us at thejetstandard@gmail.com');
             }
         });
     }
