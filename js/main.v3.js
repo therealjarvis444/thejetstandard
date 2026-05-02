@@ -180,75 +180,55 @@
             }
 
             // Track conversion
-            // TWO-STEP AUTHENTICATED API FLOW
-            const firstName = name.split(' ')[0] || '';
-            const lastName = name.split(' ').slice(1).join(' ') || '';
-            
-            const API_BASE = 'https://inspiration-shoot-hunter-telecharger.trycloudflare.com';
-            const CAMPAIGN_ID = 'b9b121b5-b013-45ab-b5d7-88111f83e253';
-            const AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYjM5ZmI4Mi00N2Y2LTUwMzUtODRjYy1lODE0N2MzNGY3NzMiLCJleHAiOjE3Nzc3ODMwNzYsInR5cGUiOiJhY2Nlc3MiLCJyb2xlIjoiY29tbWFuZGVyIiwidXNlcm5hbWUiOiJhcmNoZXIifQ.UmvuOpOQrquhssXt54KURTPpp4z56T8Wv9PtKKFxmDM';
-            const X_CAMPAIGN_ID = '0a2bfebe-373c-5219-9c6c-b26746f49de7';
-            
-            fetch(API_BASE + '/api/v1/email-campaigns/subscribers', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + AUTH_TOKEN,
-                    'X-Campaign-ID': X_CAMPAIGN_ID
-                },
-                body: JSON.stringify({
-                    email: email,
-                    first_name: firstName,
-                    last_name: lastName,
-                    campaign_id: CAMPAIGN_ID,
-                    utm_source: 'website',
-                    utm_medium: 'popup_form',
-                    status: 'active'
-                })
-            })
-            .then(function(response) {
-                if (!response.ok) {
-                    console.error('Step 1 error:', response.status);
-                    throw new Error('Subscriber creation failed: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(function(subscriberData) {
-                console.log('Step 1 success — subscriber:', subscriberData.id || subscriberData.subscriber_id);
-                
-                return fetch(API_BASE + '/api/v1/email-campaigns/' + CAMPAIGN_ID + '/send-now', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'Authorization': 'Bearer ' + AUTH_TOKEN,
-                        'X-Campaign-ID': X_CAMPAIGN_ID
-                    },
-                    body: JSON.stringify({
-                        subscriber_id: subscriberData.id || subscriberData.subscriber_id,
-                        email: email
-                    })
-                });
-            })
-            .then(function(response) {
-                if (!response.ok) {
-                    console.error('Step 2 error:', response.status);
-                    return { warning: 'Send failed but subscriber created' };
-                }
-                return response.json();
-            })
-            .then(function(sendData) {
-                console.log('Step 2 success — email sent:', sendData.status);
-            })
-            .catch(function(err) {
-                console.error('API flow error:', err.message);
-            });
             trackEvent('email_popup_conversion', {
                 event_category: 'conversion',
                 event_label: 'email_capture',
                 value: 1
             });
+
+            // ============================================
+            // CHERYL'S EMAIL ENGINE INTEGRATION
+            // Website form → Email Engine → SendGrid
+            // ============================================
+            const firstName = name.split(' ')[0] || '';
+            const lastName = name.split(' ').slice(1).join(' ') || '';
+            
+            const API_BASE = 'https://fascinating-wizard-wind-composed.trycloudflare.com';
+            
+            // Call Cheryl's website-capture webhook
+            fetch(API_BASE + '/webhooks/website-capture', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    campaign_id: 'c9c45166-0d07-418d-acd7-5901a39cd8e8',
+                    source: 'website-capture',
+                    form_data: {
+                        page: window.location.pathname,
+                        pricing_guide: isPricingGuideFlow,
+                        first_name: firstName,
+                        last_name: lastName
+                    }
+                })
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    console.error('Email engine error:', response.status);
+                    throw new Error('Email capture failed: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                console.log('Email engine success:', data);
+            })
+            .catch(function(err) {
+                console.error('Email engine error:', err.message);
+            });
+            // End of email engine integration
 
             const redirect = pendingRedirect;
             pendingRedirect = null;
