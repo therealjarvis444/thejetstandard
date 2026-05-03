@@ -187,15 +187,14 @@
             });
 
             // ============================================
-            // CHERYL'S EMAIL ENGINE INTEGRATION
+            // ============================================
+            // Email Engine Integration
             // Website form → Email Engine → SendGrid
             // ============================================
-            const firstName = name.split(' ')[0] || '';
-            const lastName = name.split(' ').slice(1).join(' ') || '';
             
-            const API_BASE = 'https://fascinating-wizard-wind-composed.trycloudflare.com';
+            const API_BASE = 'http://192.168.0.12:3003';
             
-            // Call Cheryl's website-capture webhook
+            // Call email engine website-capture webhook
             fetch(API_BASE + '/webhooks/website-capture', {
                 method: 'POST',
                 headers: {
@@ -206,13 +205,7 @@
                     name: name,
                     email: email,
                     campaign_id: 'c9c45166-0d07-418d-acd7-5901a39cd8e8',
-                    source: 'website-capture',
-                    form_data: {
-                        page: window.location.pathname,
-                        pricing_guide: isPricingGuideFlow,
-                        first_name: firstName,
-                        last_name: lastName
-                    }
+                    source: 'website-form'
                 })
             })
             .then(function(response) {
