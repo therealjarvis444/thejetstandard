@@ -1,14 +1,15 @@
 /**
- * Proxy webhook requests to the email engine
- * Handles CORS and forwards to local email engine
+ * Proxy webhook requests to MCS backend
+ * Forwards to ag-nc.co (publicly accessible via Cloudflare tunnel)
  */
 export async function onRequestPost(context) {
   try {
     const request = context.request;
     const body = await request.json();
     
-    // Forward to email engine
-    const response = await fetch('http://192.168.0.12:3003/webhooks/website-capture', {
+    // Forward to MCS backend public webhook endpoint
+    // ag-nc.co is accessible from the public internet
+    const response = await fetch('https://ag-nc.co/api/v1/webhooks/subscribe', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
