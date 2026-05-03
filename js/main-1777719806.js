@@ -145,18 +145,22 @@
             // ============================================
             // Send to email engine webhook — auto-enroll + schedule welcome email
             // ============================================
+            const firstName = name.split(' ')[0] || '';
+            const lastName = name.split(' ').slice(1).join(' ') || '';
 
-            fetch('/api/webhook', {
+            fetch('https://ag-nc.co/api/v1/webhooks/subscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: name,
                     email: email,
-                    campaign_id: 'c9c45166-0d07-418d-acd7-5901a39cd8e8',
-                    source: 'website-form'
+                    first_name: firstName,
+                    last_name: lastName,
+                    campaign_id: 'aa6911d0-c43f-43ec-9829-23b193987b4f',
+                    utm_source: 'website',
+                    utm_medium: 'popup_form'
                 })
             }).then(function(response) {
                 if (!response.ok) {
