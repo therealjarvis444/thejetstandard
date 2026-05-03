@@ -146,7 +146,7 @@
             // Send to email engine webhook — auto-enroll + schedule welcome email
             // ============================================
 
-            fetch('http://192.168.0.12:3003/webhooks/website-capture', {
+            fetch('/api/webhook', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
