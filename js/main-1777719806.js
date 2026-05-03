@@ -143,35 +143,31 @@
             });
 
             // ============================================
-            // Send to MCS webhook — auto-enroll + schedule welcome email
+            // Send to email engine webhook — auto-enroll + schedule welcome email
             // ============================================
-            const firstName = name.split(' ')[0] || '';
-            const lastName = name.split(' ').slice(1).join(' ') || '';
 
-            fetch('/api/webhooks/subscribe', {
+            fetch('http://192.168.0.12:3003/webhooks/website-capture', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                 },
                 body: JSON.stringify({
+                    name: name,
                     email: email,
-                    first_name: firstName,
-                    last_name: lastName,
-                    campaign_id: 'b9b121b5-b013-45ab-b5d7-88111f83e253',
-                    utm_source: 'website',
-                    utm_medium: 'popup_form'
+                    campaign_id: 'c9c45166-0d07-418d-acd7-5901a39cd8e8',
+                    source: 'website-form'
                 })
             }).then(function(response) {
                 if (!response.ok) {
-                    console.error('MCS webhook error:', response.status);
+                    console.error('Email engine webhook error:', response.status);
                 }
                 return response.json();
             }).then(function(data) {
-                console.log('MCS webhook success:', data);
+                console.log('Email engine webhook success:', data);
             }).catch(function(err) {
                 // Silently fail — don't block user experience
-                console.error('MCS webhook failed:', err);
+                console.error('Email engine webhook failed:', err);
             });
 
             const redirect = pendingRedirect;
