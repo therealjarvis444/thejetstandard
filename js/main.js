@@ -197,12 +197,10 @@
             const lastName = nameParts.slice(1).join(' ') || '';
             
             try {
-                const response = await fetch('http://localhost:8000/api/v1/email-campaigns/subscribers', {
+                const response = await fetch('/api/subscribe', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMjQyM2M5OC0xYTk1LTVhNWQtYmUxYi0yZTkwYmQwZTlkYWMiLCJleHAiOjE3Nzc3ODMyODIsInR5cGUiOiJhY2Nlc3MiLCJyb2xlIjoib3BlcmF0b3IiLCJ1c2VybmFtZSI6ImNoZXJ5bCJ9.euKGaTqcNDP0uR_fI5b3h3k_Q3UKqBp7I4UngUNqV2k',
-                        'X-Campaign-ID': '0a2bfebe-373c-5219-9c6c-b26746f49de7'
                     },
                     body: JSON.stringify({
                         email: email,
